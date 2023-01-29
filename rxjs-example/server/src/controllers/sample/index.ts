@@ -4,39 +4,41 @@ import { Router, Request, Response, NextFunction } from "express";
 import wrapper from "src/middlewares/asyncWrapper";
 import { ConfigService } from "src/configs/config.service";
 import { LoggerService } from "src/modules/logger";
-import { SampleController } from "src/controllers/sample";
+import rateLimit, { MemoryStore } from "express-rate-limit";
 
 @injectable()
-export class MainController {
+export class SampleController {
   private _router: Router;
 
   constructor(
     private readonly configService: ConfigService,
-    private readonly logger: LoggerService,
-    private readonly sampleController: SampleController
+    private readonly logger: LoggerService
   ) {
     this._router = Router();
 
-    // this._router.use("/sample", sampleController.router);
-
-    this._router.use("/ping", wrapper(this.ping));
-    this._router.use("/sample", wrapper(this.sampleController.router));
+    this._router.get("/rate-limit", this.limiter, wrapper(this.rateLimit));
   }
 
   get router() {
     return this._router;
   }
 
-  public ping = async (
+  public limiter = rateLimit({
+    windowMs: 60 * 1000, // 1 min
+    max: 5,
+    message: "Too many request in min",
+    standardHeaders: true,
+    store: new MemoryStore(), // redis or mongodb or memory
+  });
+
+  public rateLimit = async (
     request: Request,
     response: Response,
     next: NextFunction
   ) => {
-    this.logger.debug("MainController:ping");
+    this.logger.debug("SampleController:rateLimit");
     response.status(200).json({
       message: "success",
-      env: this.configService.defaultConfig.env,
-      ip: request.ip,
     });
     next();
   };
