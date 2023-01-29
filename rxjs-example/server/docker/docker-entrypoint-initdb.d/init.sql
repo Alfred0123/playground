@@ -1,0 +1,2 @@
+CREATE DATABASE common;
+CREATE DATABASE test;

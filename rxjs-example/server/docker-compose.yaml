@@ -1,0 +1,56 @@
+version: "3"
+volumes:
+  node_modules:
+  postgres_data:
+
+services:
+  # db:
+  #   restart: always
+  #   image: postgres:latest
+  #   container_name: db
+  #   # restart: always
+  #   # platform: 'linux/amd64'
+  #   ports:
+  #     - "5432:5432"
+  #   environment:
+  #     POSTGRES_USER: "postgres"
+  #     POSTGRES_PASSWORD: "password"
+  #     PGDATA: /data/postgres
+  #   volumes:
+  #     - postgres_data:/data/postgres
+  #     - ./docker/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+  # firebase:
+  #   restart: always
+  #   build:
+  #     context: .
+  #     dockerfile: 'Dockerfile.emulator'
+  #   ports:
+  #     - '9099:9099'
+  #     - '4000:4000'
+  #   volumes:
+  #     - ./docker/firebase/firebase.json:/home/node/firebase.json
+  #   command:
+  #     - sh
+  #     - -c
+  #     - firebase emulators:start -P sable-dev --import=./save-data --export-on-exit
+  server-frame:
+    # restart: always
+    build:
+      context: .
+      dockerfile: "Dockerfile.dev"
+    platform: "linux/amd64"
+    volumes:
+      - ".:/app"
+      - "./node_modules:/app/node_modules"
+      # - "$HOME/goog_creds.json:/app/goog_creds.json"
+    environment:
+      PG_HOST: "db"
+      ENV: "local"
+      # GOOGLE_APPLICATION_CREDENTIALS: /app/goog_creds.json
+      # FIREBASE_AUTH_EMULATOR_HOST: "firebase:9099"
+    ports:
+      - "3000:3000"
+    # command: "npm run start:debug"
+    # depends_on:
+    #   - firebase
+    #   - db
