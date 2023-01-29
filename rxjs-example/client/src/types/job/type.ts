@@ -1,5 +1,5 @@
 export const JOB_TYPE = {
-  FINANCIAL_STATEMENTS: "FinancialStatements",
+  REQUEST: "request",
 } as const;
 export type JOB_TYPE = typeof JOB_TYPE[keyof typeof JOB_TYPE];
 
