@@ -1,0 +1,4 @@
+env: local
+service:
+  name: job-frame
+  log_level: "debug"
