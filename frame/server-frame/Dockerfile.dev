@@ -1,0 +1,11 @@
+#---- base ----
+
+FROM node:16-slim
+WORKDIR /app
+COPY . ./
+RUN npm install
+RUN npm run build
+# procps / nest dev server hot reload 관련 error
+RUN apt-get update -y && apt-get install -y python3 build-essential procps
+EXPOSE 3000
+CMD ["npm", "run", "watch"]
